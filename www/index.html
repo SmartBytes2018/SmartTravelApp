@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+    <meta http-equiv="Content-Security-Policy" content="default-src * 'unsafe-inline'; style-src 'self' http://* 'unsafe-inline' 'unsafe-eval' http://cdnjs.cloudflare.com; media-src *" />
+
+    <link href="lib/ionic/css/ionic.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <script src="lib/ionic/js/ionic.bundle.js"></script>
+    <script src="cordova.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/app.js"></script>
+    <script data-semver="1.5.5" src="https://code.angularjs.org/1.5.5/angular.js" data-require="angular.js@1.5.x"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src = "https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.1/angular-sanitize.min.js"></script>
+    <link rel = "stylesheet" type="text/css" href = "https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    <link rel="stylesheet" type="text/css" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <link rel="stylesheet" type="text/css" href="css/animate.css" />
+  <title>Smart reader</title>
+</head>
+<body ng-app="myApp" layout="column" ng-controller="AppCtrl">
+    <section layout="row" flex>
+        <md-sidenav class="md-sidenav-left" md-component-id="closeEventsDisabled"
+                      md-whiteframe="4" md-disable-close-events>
+    
+            <md-toolbar class="md-theme-indigo"  ng-click="toggleSidenav()">
+                <div flex class="header" layout="row" layout-wrap>
+                      <span><i class="material-icons">home</i></span><span style="padding:2% 0px 0px 20px; font-size:60%;">Home</span>
+                  </div>
+            </md-toolbar>
+    
+            <md-content layout-margin style="min-height: 80%;overflow: hidden;">
+              <div layout="column" class="center" layout-wrap>
+          	<div flex class="navRowAlign md-whiteframe-4dp" ng-click="showHidecards(true, 'C')">My passes</div>
+          	<div flex class="navRowAlign md-whiteframe-4dp" ng-click="fnShowPayment(true)">My wallet</div>
+          	<div flex class="navRowAlign md-whiteframe-4dp" ng-click="fnUser(true)">My Account</div>
+                <div flex class="navRowAlign md-whiteframe-4dp">Logout</div>
+              </div>
+            </md-content>
+          </md-sidenav>
+        <div layout="column">
+            <div layout-wrap>
+                <div flex class="header" layout="row" layout-wrap>
+                    <div flex="20" class="center" ng-click="toggleSidenav()">
+                        <i class="material-icons">menu</i>
+                    </div>
+                    <div flex class="center appName">
+                        Smart travel
+                    </div>
+                    <div flex="20" hide-gt-xs class="center">
+					
+                    </div>
+                    <div flex="20" hide show-gt-xs class="center">
+					
+                    </div>
+            </div>
+            <div layout="column" class="content center" layout-wrap>
+			<div ng-show="!showSmartcards && !showPayment && showSearch" class="showPage">
+				<div ng-show="!showMap">
+					<div flex class="heading md-whiteframe-2dp">Select your location</div>
+					<div flex class="rowAlign inputContainer">
+						<md-input-container class="md-block" flex-gt-sm>
+				            <label>Source</label>
+				            <input ng-model="location.origin" ng-focus="disableTap('origin')" id="origin">
+				        </md-input-container>
+					</div>
+					<div flex class="rowAlign inputContainer">
+						<md-input-container class="md-block" flex-gt-sm>
+				            <label>Destination</label>
+				            <input ng-model="location.destination" ng-focus="disableTap('destination')" id="destination">
+				        </md-input-container>
+					</div>
+					<section layout="row" layout-align="center center" layout-wrap style="margin-top:5em;">
+		        		<md-button flex class="md-raised md-primary" 
+		        		ng-disabled="!location.origin || !location.destination" ng-click="fnShowMaps($event)">Search</md-button>
+		        	</section>
+	        	</div>
+	        	<div ng-show="showMap" id="map"></div>
+	        	<div ng-show="showMap" flex class="rowAlign md-whiteframe-12dp itemList textAlignLeft" ng-repeat="routes in availableRoutes">
+	        		<div flex layout="row">
+	        			<div flex="10"><input type="radio" name="trip" ng-model="selectedTrip" value="{{$index}}" ng-change='showButton($index)'></div>
+	        			<div flex layout="row" ng-click="manageExpandCollapse(routes, $index)"><!-- <span><i class="material-icons">keyboard_backspace</i><i class="material-icons rotate90">keyboard_backspace</i></span><span> {{routes.legs[0].distance.text}}</span> -->
+			        		<div flex>
+			        			<span class="paddingLeft">{{routes.legs[0].duration.text}}</span>
+			        		</div>
+			        		<div flex>
+			        			<span class="paddingLeft"><span ng-if="routes.fare"> {{routes.fare.text}}</span><span ng-if="!routes.fare">N/A</span>
+			        		</div>
+			        		<div flex><span class="paddingLeft">{{routes.legs[0].distance.text}}</span></div>
+			        		<div flex>
+			        			<span class="paddingLeft">{{routes.legs[0].departure_time.text}} - {{routes.legs[0].arrival_time.text}}</span>
+			        		</div>
+			        		<div flex>
+			        			<span><i class="material-icons" style="font-size: 16px;">credit_card</i></span>
+			        			<span><input class="displayCount" type="text" ng-model="choice.number" ng-init="choice.number = itemNumber(routes.legs[0].steps)" ></span>
+			        		</div>
+		        		</div>
+	        		</div>
+	        		<div flex style="text-align:center; padding-top:2px;">
+	        			<i class="material-icons" style="font-size: 16px;" ng-show="!routes.showDetails">expand_more</i>
+	        			<i class="material-icons" style="font-size: 16px;" ng-show="routes.showDetails">expand_less</i>
+	        		</div>
+	        		<div flex layout="column" id="{{$index}}" ng-show="routes.showDetails">
+	        			<div flex layout="row" style="border-top:1px solid #ccc;padding-bottom:5px;" ng-repeat="legs in routes.legs[0].steps" ng-if="legs.travel_mode !== 'WALKING'">
+	        				<div flex="15" style="padding-top:20px">
+		        				<div ng-if="legs.transit.line.vehicle.name === 'Bus'"><i class="material-icons">directions_bus</i></div>
+		        				<div ng-if="legs.transit.line.vehicle.name === 'Train'"><i class="material-icons">tram</i></div>
+		        				<div ng-if="legs.transit.line.vehicle.name === 'Metro rail'"><i class="material-icons">train</i></div>
+		        				<div>{{legs.transit.line.vehicle.name}}</div>
+		        			</div>
+		        			<div flex layout="column" style="margin-top:10px;">
+		        				<div style="margin-top:5px;">Name :<span> {{legs.transit.line.agencies[0].name}}</span></div>
+		        				<div style="margin-top:5px;">Departure :<span> {{legs.transit.departure_stop.name}}</span></div>
+		        				<div style="margin-top:5px;">Arrival :<span> {{legs.transit.arrival_stop.name}}</span></div>
+		        				<div style="margin-top:5px;" ng-if="legs.transit.line.vehicle.name === 'Bus'">Number :<span> {{legs.transit.line.short_name}}</span></div>
+		        				<div style="margin-top:5px;" ng-if="legs.transit.line.vehicle.name !== 'Bus'">Line :<span> {{legs.transit.line.name}}</span></div>
+		        			</div>
+	        			</div>
+	        		</div>
+	        	</div>
+	        	<section layout="row" layout-align="center center" layout-wrap ng-show="showTripBtn">
+	        		<md-button flex class="md-raised md-primary" ng-click="tripSubscribe($event)">Download passes</md-button>
+	        	</section>
+			</div>
+			<div ng-show="showSmartcards && !showPayment && !showSearch" class="showPage">
+				<div flex class="heading md-whiteframe-2dp">My Passes</div>
+				<div flex class="rowAlign md-whiteframe-12dp itemList" ng-repeat="myitem in mySelectedCards" ng-click="openItem($index)">
+					<span>{{myitem.name}}</span>
+					<span style="position: absolute;right: 1em;top:0.8em" ng-click="deletePass($index, myitem.name, $event)"><i class="material-icons">delete</i></span>
+				</div>
+			</div>
+			<div ng-show="!showSmartcards && !showPayment && !showSearch" class="showPage">
+				<div flex class="heading md-whiteframe-2dp">Available Passes</div>
+                    <div flex class="rowAlign md-whiteframe-12dp itemList" ng-repeat="item in availableCards" ng-click="openItem($index)">
+                        <span style="position: absolute;left: 1em;top:1em" ng-if="item.providers.length <= 0">
+                            <md-checkbox ng-checked="exists(item, selected)" ng-click="toggle(item, selected)">
+                              </md-checkbox>
+                        </span>
+                          <span>{{ item.name }} </span>
+                          <span ng-if="item.providers.length <= 0" style="position: absolute;right: 1em;top:0.8em"><i class="material-icons">info</i></span>
+                        <span ng-if="item.providers.length > 0" style="position: absolute;right: 1em;top:0.8em"><i class="material-icons">expand_more</i></span>
+                        <div id="p_{{$index}}" class="providerItems" flex ng-hide="!item.showProviders">
+                            <div style="border-radius:5px; background:#00A9E0; padding:10px; margin-top:10px;" class="itemList" ng-repeat="provider in item.providers">
+                            <span style="position: absolute;left: 3em;top:0.5em">
+                                <md-checkbox></md-checkbox>
+                            </span>
+                            <span>{{provider}}</span>
+                            <span style="position: absolute;right: 1em;top:0.5em"><i class="material-icons">info</i></span>
+                            </div>
+                        </div>
+                    </div>
+                    <section layout="row" layout-align="center center" layout-wrap style="margin-top:5em;">
+                        <md-button flex class="md-raised md-primary" ng-click="subscribe($event)">Subscribe</md-button>
+                    </section>
+                </div>
+                <div ng-show="showPayment" class="showPage">
+				<div flex class="heading md-whiteframe-2dp">My wallet</div>
+				<div flex ng-show="!showWallet">
+					<div class="rowAlign">payment wallet not linked, please link</div>
+					<div flex class="rowAlign inputContainer">
+						<md-input-container md-no-float class="md-block">
+					      	<md-icon md-svg-src="img/icons/ic_phone_24px.svg"></md-icon>
+					      	<label>Phone</label>
+					      	<input ng-model="mobileNumber" type="number" maxlength="10">
+					    </md-input-container>
+					    <section layout="row" layout-align="center center" layout-wrap ng-show="!showOTP">
+			        		<md-button flex class="md-raised md-primary" ng-click="showOTP = true">generate OTP</md-button>
+			        	</section>
+			        	<section layout="row" layout-align="center center" layout-wrap ng-show="showOTP">
+			        		<md-input-container md-no-float class="md-block">
+					      	<md-icon md-svg-src="img/icons/ic_phone_24px.svg"></md-icon>
+					      	<label>OTP</label>
+					      	<input type="password" maxlength="4">
+					    </md-input-container>
+					    <md-button flex class="md-raised md-primary" ng-show="showOTP" ng-click="showWallet = true">Verify</md-button>
+			        	</section>
+					</div>
+				</div>
+				<div flex ng-show="showWallet">
+					<div flex class="rowAlign md-whiteframe-12dp itemList" style="background:#ddd; text-align: left; margin:10px 2px;">
+						<span style="font-size: 90%;font-weight:none;">My payment wallet: </span>
+						<span style="font-size:130%; margin-left: 1em;">&#x20B9; {{availableCash}}</span>
+					</div>
+					<div flex class="rowAlign md-whiteframe-12dp itemList" style="text-align: left; margin:10px 2px;border:1px solid #ccc;">
+						<div flex style="text-align:left;">My transactions</div>
+						<div flex layout="row" style="border-top:1px solid #ccc; border-bottom:1px solid #ccc; padding:10px 0px" ng-repeat="transaction in myTransactions">
+							<div flex="20">
+								<img ng-if="transaction.action === 'spent'" src="img/wSpent.png" alt="Amadeus" height="35px" width="35px">
+								<img ng-if="transaction.action === 'add'" src="img/wAdd.drawable" alt="Amadeus" height="35px" width="35px">
+							</div>
+							<div flex layout="column">
+								<div flex layout="row">
+									<div flex>
+										Wallet money 
+										<span ng-if="transaction.action === 'spent'">sent:</span>
+										<span ng-if="transaction.action === 'add'">added:</span>
+									</div>
+									<div><span ng-if="transaction.action === 'spent'">-</span>
+									<span ng-if="transaction.action === 'add'">+</span> &#x20B9; {{transaction.amount}}</div>
+								</div>
+								<div flex layout="row">
+									<div flex><span ng-if="transaction.action === 'spent'">To</span>
+									<span ng-if="transaction.action === 'add'">From</span>: {{transaction.based}}</div>
+								</div>
+								<div flex layout="row" style="margin-top:5px;font-style: italic;">
+									{{transaction.date}}
+								</div>
+								<div flex layout="row" style="font-style: italic;">
+									Id: {{transaction.id}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div flex class="footer" layout="row" layout-wrap>
+			<div flex class="center" ng-click="showHidecards(false, 'H')">
+				<i class="material-icons">home</i>
+			</div>
+			<div flex class="center" ng-click="showHidecards(false, 'A')">
+				<i class="material-icons">list</i>
+			</div>
+			<div flex class="center" ng-click="selectCard('metro', 'X')">
+				<i class="material-icons">question_answer</i>
+			</div>
+			<div flex class="center" ng-click="selectCard('metro', 'E')">
+				<i class="material-icons">settings</i>
+			</div>
+		</div>
+	</div>
+	</section>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAghqmO6gO5mx5YYARoawL9ZgWASMIoDOs&libraries=places"></script>
+    <script type="text/javascript" src="cordova.js"></script>
+    <script type="text/javascript" src="js/index.js"></script>
+    <script src="js/AppCtrl.js"></script>
+</body>
+</html>
