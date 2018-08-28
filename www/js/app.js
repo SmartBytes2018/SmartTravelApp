@@ -84,10 +84,10 @@ angular.module('myApp', ['ionic', 'nfcFilters', 'ngMaterial', 'ngAnimate', 'ngSa
             var fare;
             switch(cardType) {
                 case 'bus'.toUpperCase():
-                    if (gateType === 'E'.toUpperCase()) {
+                    if (gateType === 'entry'.toUpperCase()) {
                         $scope.msg = "Welcome to " + serviceProvider + " bus service. <br /> <br />You have boarded at <b>" + stationCode + "</b> bus stop";
                         $scope.showAlert($scope.msg);
-                    } else if (gateType === 'X'.toUpperCase()) {
+                    } else if (gateType === 'exit'.toUpperCase()) {
                         fare = gateData[4].toUpperCase().trim();
                         $scope.msg = "Thanks for choosing " + serviceProvider + " bus service. <br /><br />You have arrived at <b>" + stationCode + "</b> bus stop. <br /><br /> Your wallet has been charged <b>" + fare + "</b> for this journey";
                         $scope.availableCash = $scope.availableCash - 40;
@@ -100,10 +100,10 @@ angular.module('myApp', ['ionic', 'nfcFilters', 'ngMaterial', 'ngAnimate', 'ngSa
                     }
                     break;
                 case 'metro'.toUpperCase():
-                    if (gateType === 'E'.toUpperCase()) {
+                    if (gateType === 'entry'.toUpperCase()) {
                         $scope.msg = "Welcome to " + serviceProvider + ". <br /> <br />You have boarded at <b>" + stationCode + "</b> station";
                         $scope.showAlert($scope.msg);
-                    } else if (gateType === 'X'.toUpperCase()) {
+                    } else if (gateType === 'exit'.toUpperCase()) {
                         fare = gateData[4].toUpperCase().trim();
                         $scope.msg = "Thanks for choosing " + serviceProvider + ". <br /><br />You have arrived at <b>" + stationCode + "</b> station. <br /><br /> Your wallet has been charged <b>" + fare + "</b> for this journey";
                         $scope.availableCash = $scope.availableCash - 40;
